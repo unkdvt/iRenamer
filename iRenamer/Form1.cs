@@ -32,22 +32,45 @@ namespace iRenamer
                     DirectoryInfo d = new DirectoryInfo(folderBrowserDialog1.SelectedPath);
 
                     foreach (DirectoryInfo s in d.GetDirectories())
-                    {                                                
+                    {
                         string name = s.FullName.Remove(0, s.FullName.LastIndexOf('\\') + 1).Trim();
                         string[] a = name.Split(new char[] { ' ' }, 2);
-                        if (a.Length > 1)                        {
+                        if (a.Length > 1)
+                        {
                             string number = a[0].Trim();
                             string fullname = a[1].Trim();
                             listBox1.Items.Add(number);
                             listBox2.Items.Add(fullname);
                             listBox3.Items.Add(fullname + " - " + number);
+                            System.IO.Directory.CreateDirectory(folderBrowserDialog1.SelectedPath + "\\rename\\" + fullname + ' ' + number);
                         }
                     }
-                    System.IO.Directory.CreateDirectory(folderBrowserDialog1.SelectedPath + "\\rename\\" + name.Split(' ')[1] + ' ' + name.Split(' ')[0]);
                 }
 
             }
             catch { }
+        }
+
+        private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0) return;
+            //if the item state is selected them change the back color 
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+                e = new DrawItemEventArgs(e.Graphics,
+                                          e.Font,
+                                          e.Bounds,
+                                          e.Index,
+                                          e.State ^ DrawItemState.Selected,
+                                          e.ForeColor,
+                                          Color.Yellow);//Choose the color
+
+            // Draw the background of the ListBox control for each item.
+            e.DrawBackground();
+            // Draw the current item text
+            e.Graphics.DrawString(listBox1.Items[e.Index].ToString(), e.Font, Brushes.Black, e.Bounds, StringFormat.GenericDefault);
+            // If the ListBox has focus, draw a focus rectangle around the selected item.
+            e.DrawFocusRectangle();
+
         }
     }
 }
